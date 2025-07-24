@@ -1,10 +1,10 @@
-name: RECOVERY
+name: VENDOR_BOOT
 
 on:
   workflow_dispatch:
     inputs:
-      RECOVERY_URL:
-        description: 'RECOVERY URL'
+      VENDOR_BOOT_URL:
+        description: 'VENDOR_BOOT URL'
         required: true
         default: 'https://transfer.sh/(RECOMMENDED)'
 
@@ -24,29 +24,27 @@ jobs:
       run: |
         ls
         pwd
-        wget ${{ github.event.inputs.RECOVERY_URL }} -O recovery.img
+        wget ${{ github.event.inputs.VENDOR_BOOT_URL }} -O vendor_boot.img
 
     - name: Patch Process-1
       run: |
         chmod a+x script1.sh
         chmod a+x magiskboot
-        ./script1.sh recovery.img || true
+        ./script1.sh vendor_boot.img || true
 
     - name: Patch Process-2
       run: |
         chmod a+x script2.sh
         ./script2.sh || true
-        python3 avbtool extract_public_key --key phh.pem --output phh.pub.bin
-        python3 avbtool add_hash_footer --partition_name recovery --partition_size $(wc -c recovery.img |cut -f 1 -d ' ') --image recovery-patched.img --key phh.pem --algorithm SHA256_RSA4096
         mkdir output && cd output
-        mv ../r-patched.img recovery.img
-        tar cvf fastbootd-recovery.tar recovery.img
-        md5sum -t fastbootd-recovery.tar >> fastbootd-recovery.tar
-        mv fastbootd-recovery.tar fastbootd-recovery.tar.md5
+        mv ../r-patched.img vendor_boot.img
+        tar cvf fastbootd-vendor_boot.tar vendor_boot.img
+        md5sum -t fastbootd-vendor_boot.tar >> fastbootd-vendor_boot.tar
+        mv fastbootd-vendor_boot.tar fastbootd-vendor_boot.tar.md5
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
       with:
         files: output/*.md5
-        name: Patched-Recovery
+        name: Patched-Vendor_Boot
         tag_name: ${{ github.run_id }}
