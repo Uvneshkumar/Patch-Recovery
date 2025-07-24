@@ -6,7 +6,7 @@ on:
       VENDOR_BOOT_URL:
         description: 'VENDOR_BOOT URL'
         required: true
-        default: 'https://transfer.sh/(RECOMMENDED)'
+        default: 'https://files.catbox.moe/(RECOMMENDED)'
 
 jobs:
   build:
